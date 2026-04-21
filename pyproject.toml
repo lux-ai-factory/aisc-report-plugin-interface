@@ -1,0 +1,18 @@
+[project]
+name = "vera-report-plugin-interface"
+version = "0.1.0"
+description = "Shared plugin interface for the VERA report generator"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "jinja2>=3.1.6",
+    "sqlalchemy>=2.0.48",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["vera_report_plugin_interface*"]
