@@ -23,9 +23,19 @@ class BaseReporterPlugin(ABC):
     def _template_package(self) -> str:
         module_name = self.__class__.__module__
         return module_name.rsplit(".", 1)[0] if "." in module_name else module_name
+    
+    def _resolve_shared_templates_dir(self) -> Path:
+        start = Path(__file__).resolve()
+        for parent in [start.parent, *start.parents]:
+            candidate = parent / "resources" / "templates"
+            if candidate.is_dir():
+                return candidate
+        raise FileNotFoundError(
+            "Could not locate shared templates directory 'resources/templates' from base_report_plugin.py"
+        )
 
     def _template_environment(self) -> Environment:
-        shared_templates_dir = Path(__file__).resolve().parents[1] / "resources" / "templates"
+        shared_templates_dir = self._resolve_shared_templates_dir()
         return Environment(
             loader=ChoiceLoader([
                 PackageLoader(self._template_package(), "."),
