@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from pathlib import PurePosixPath
@@ -5,6 +6,8 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from jinja2 import ChoiceLoader, Environment, FileSystemLoader, PackageLoader, select_autoescape
+
+logger = logging.getLogger(__name__)
 
 class BaseReporterPlugin(ABC):
     """
@@ -78,6 +81,11 @@ class BaseReporterPlugin(ABC):
         context = self.build_template_context(**kwargs)
         try:
             report_content = self.render_package_template(template_relative_path, **context)
-        except Exception as e:
+        except Exception:
+            logger.exception(
+                "Failed to generate content for plugin %s from template %s",
+                self.__class__.__name__,
+                template_relative_path,
+            )
             report_content = f"[ERROR] Failed to generate content for plugin {self.__class__.__name__}: Check logs for details."
         return report_content
