@@ -1,13 +1,24 @@
 [project]
-name = "vera-report-plugin-interface"
-version = "0.1.0"
-description = "Shared plugin interface for the VERA report generator"
+name = "aisc-report-plugin-interface"
+version = "0.2.0"
+description = "Shared plugin interface for the AISC report generator"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "jinja2>=3.1.6",
+    "jsonschema>=4.21",
     "sqlalchemy>=2.0.48",
+    "markdown-it-py>=3.0",
+    "nh3>=0.2.17",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]
@@ -15,4 +26,4 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["vera_report_plugin_interface*"]
+include = ["aisc_report_plugin_interface*"]
