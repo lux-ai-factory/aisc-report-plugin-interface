@@ -84,7 +84,7 @@ Requires Python 3.12 or newer. Dependencies: `jinja2`, `jsonschema`, `markdown-i
 The package is not on PyPI. Install it from git:
 
 ```bash
-uv add git+https://github.com/lux-ai-factory/aisc-report-plugin-interface --branch feat/unified-modules
+uv add git+https://github.com/lux-ai-factory/aisc-report-plugin-interface --branch pilot
 ```
 
 or from a checkout, as the report renderer does in its `pyproject.toml`:
@@ -129,6 +129,6 @@ tests/                          contract tests; fake_block_pkg/ and fake_i18n_pk
 
 ## Contributing
 
-`feat/unified-modules` is the branch the AISC stack uses and the only one to work on. A test
+`pilot` is the branch the AISC stack uses and the only one to work on. A test
 (`tests/test_target.py`) requires the version in `pyproject.toml` to be at least 0.2.0, the version
 that added `ToolRun.target`.
