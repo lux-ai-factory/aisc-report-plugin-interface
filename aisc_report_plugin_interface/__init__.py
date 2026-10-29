@@ -5,7 +5,6 @@ from .tools import BaseToolRenderer, ToolRun, headline_items, normalise_tool_nam
 INTERFACE_VERSION = 2
 
 __all__ = [
-    "BaseReporterPlugin",
     "BaseBlockRenderer",
     "BlockResult",
     "InvalidBlockType",
@@ -18,10 +17,3 @@ __all__ = [
     "INTERFACE_VERSION",
 ]
 
-
-def __getattr__(name):
-    """The legacy plugin class loads lazily, so importing the package does not load SQLAlchemy."""
-    if name == "BaseReporterPlugin":
-        from .base_report_plugin import BaseReporterPlugin
-        return BaseReporterPlugin
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

@@ -1,8 +1,6 @@
 """Package templates for block and tool renderers.
 
-Autoescape is on for every template, whatever its extension (`.html.j2` included). The legacy
-BaseReporterPlugin turns autoescape on for `.html` and `.xml` names only, so it does not escape
-`.html.j2` templates.
+Autoescape is on for every template, whatever its extension (`.html.j2` included).
 """
 from __future__ import annotations
 
