@@ -181,3 +181,68 @@ def test_plural_the_variant_of_a_later_catalogue_serves_when_the_first_has_the_t
 def test_plural_a_bad_rule_is_refused(tmp_path, bad):
     with pytest.raises(ValueError):
         want(M, "load_catalogue")(write(tmp_path, meta={"plural_one": bad}))
+
+
+# numbers and percentages as a tool renderer prints them
+
+class NumberCtx:
+    def __init__(self, decimal_separator=".", percent_format="{value}%"):
+        self.decimal_separator = decimal_separator
+        self.percent_format = percent_format
+
+
+@pytest.mark.parametrize("value, decimals, expected", [
+    (0.5, None, "0,5"),
+    (3, None, "3"),
+    (2.0, 2, "2,00"),
+    (1.236, 2, "1,24"),
+    (None, None, "n/a"),
+    ("abc", None, "abc"),
+])
+def test_format_number_uses_the_report_decimal_separator(value, decimals, expected):
+    assert want(M, "format_number")(NumberCtx(decimal_separator=","), value, decimals) == expected
+
+
+def test_format_number_without_a_separator_on_the_context_uses_a_point():
+    assert want(M, "format_number")(object(), 0.25) == "0.25"
+
+
+@pytest.mark.parametrize("share, decimals, expected", [
+    (0.85, 1, "85 %"),
+    (0.1234, 1, "12,3 %"),
+    (0.125, 2, "12,5 %"),
+    (1, 1, "100 %"),
+    (-0.0001, 1, "0 %"),
+    (None, 1, "n/a"),
+])
+def test_format_percent_uses_the_report_percent_format(share, decimals, expected):
+    ctx = NumberCtx(decimal_separator=",", percent_format="{value} %")
+    assert want(M, "format_percent")(ctx, share, decimals) == expected
+
+
+def test_format_percent_without_formats_on_the_context_prints_value_and_percent_sign():
+    assert want(M, "format_percent")(object(), 0.5) == "50%"
+
+
+def test_translator_for_prefers_the_renderer_translate_for():
+    class Ctx:
+        def translate_for(self, package):
+            return lambda msgid, **params: f"{package}: {msgid}"
+
+        def t(self, msgid, **params):
+            return f"report: {msgid}"
+
+    assert want(M, "translator_for")(Ctx(), "some_plugin")("Contents") == "some_plugin: Contents"
+
+
+def test_translator_for_without_translate_for_uses_the_report_translator():
+    class Ctx:
+        def t(self, msgid, **params):
+            return f"report: {msgid}"
+
+    assert want(M, "translator_for")(Ctx(), "some_plugin")("Contents") == "report: Contents"
+
+
+def test_translator_for_without_any_translator_is_english():
+    t = want(M, "translator_for")(object(), "some_plugin")
+    assert t("{count} groups", count=2) == "2 groups"
