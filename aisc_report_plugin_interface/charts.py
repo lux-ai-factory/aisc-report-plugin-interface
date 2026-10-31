@@ -4,8 +4,8 @@
 and colours give the same bytes. Bars use the primary colour only (no red, amber or green scale).
 
 A spec is {"id", "title", "kind": "bar" | "hbar", "value_format": "percent" | "number",
-"axis_min" (default 0), "axis_max" (None = rounded-up maximum), "series": [{"label", "value"}],
-"note" (optional)}.
+"axis_min" (default 0, or below the lowest value when one is negative), "axis_max" (None = rounded-up
+maximum), "series": [{"label", "value"}], "note" (optional)}.
 """
 from __future__ import annotations
 
