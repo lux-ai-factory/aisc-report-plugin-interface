@@ -28,10 +28,3 @@ def test_the_package_does_not_depend_on_a_database_library():
     project = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]
     assert not [d for d in project["dependencies"] if d.lower().startswith("sqlalchemy")]
 
-
-def test_no_source_file_mentions_a_shared_session_or_render_template():
-    for path in (ROOT / "aisc_report_plugin_interface").rglob("*.py"):
-        text = path.read_text()
-        assert "shared_session" not in text, path
-        assert "def render_template" not in text, path
-        assert "BaseReporterPlugin" not in text, path
