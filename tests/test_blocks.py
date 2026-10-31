@@ -139,6 +139,12 @@ def test_option_problems_name_the_field_and_the_reason():
     assert problems[0]["message"]  # a reason, in words
 
 
+def test_an_unknown_option_is_named_as_not_an_option_of_the_block():
+    cls = _block_class()
+    problems = cls.options_problems({"title": "", "page_break_before": False, "limit": 2, "colour": "red"})
+    assert problems == [{"pointer": "/colour", "message": "is not an option of this block"}]
+
+
 def test_block_templates_are_autoescaped_even_as_html_j2():
     """Autoescape is on. The legacy machinery keys autoescape on the .html extension, so a
     `.html.j2` template (every template in these repos) would not be escaped there: here it must be."""
