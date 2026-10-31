@@ -92,6 +92,39 @@ def test_no_catalogue_for_the_language_means_english():
     assert t("Overall pass rate") == "Overall pass rate"
 
 
+def test_a_missing_catalogue_logs_nothing(caplog):
+    with caplog.at_level("WARNING", logger=M):
+        want(M, "package_catalogue")("fake_i18n_pkg", "de")
+    assert caplog.records == []
+
+
+def test_a_broken_package_catalogue_falls_back_to_english_with_a_warning(tmp_path, monkeypatch, caplog):
+    (tmp_path / "broken_i18n_pkg" / "i18n").mkdir(parents=True)
+    (tmp_path / "broken_i18n_pkg" / "__init__.py").write_text("")
+    (tmp_path / "broken_i18n_pkg" / "i18n" / "en.json").write_text("{ not json", encoding="utf-8")
+    monkeypatch.syspath_prepend(str(tmp_path))
+    with caplog.at_level("WARNING", logger=M):
+        assert want(M, "package_catalogue")("broken_i18n_pkg", "en") is None
+    [record] = caplog.records
+    assert record.levelname == "WARNING"
+    assert "broken_i18n_pkg" in record.getMessage() and "not a catalogue" in record.getMessage()
+
+
+def test_a_failing_translate_for_falls_back_to_the_report_translator_with_a_warning(caplog):
+    class Ctx:
+        def translate_for(self, package):
+            raise RuntimeError("no catalogue store")
+
+        def t(self, msgid, **params):
+            return f"report: {msgid}"
+
+    with caplog.at_level("WARNING", logger=M):
+        t = want(M, "translator_for")(Ctx(), "some_plugin")
+    assert t("Contents") == "report: Contents"
+    [record] = caplog.records
+    assert "some_plugin" in record.getMessage() and "no catalogue store" in record.getMessage()
+
+
 # singular forms ("1 objective", not "1 objectives")
 # The rule [0, 1] is sample data for the mechanism: a catalogue may name any counts that take the singular.
 

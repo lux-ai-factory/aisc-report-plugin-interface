@@ -13,12 +13,15 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import logging
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
 CODE = re.compile(r"^[a-z]{2}(-[A-Z]{2})?$")
 _PLACEHOLDER = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*)\}")
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -78,7 +81,8 @@ def package_catalogue(package: str, code: str) -> Catalogue | None:
         if path.is_file():
             try:
                 return load_catalogue(path)
-            except ValueError:
+            except ValueError as exc:
+                logger.warning("the %s catalogue of %s is unusable, English is used instead: %s", code, package, exc)
                 return None
     return None
 
@@ -125,8 +129,8 @@ def translator_for(ctx, package: str):
     if callable(translate_for):
         try:
             return translate_for(package)
-        except Exception:  # noqa: BLE001
-            pass
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("no translator for %s, the report's own is used instead: %s", package, exc)
     t = getattr(ctx, "t", None)
     if callable(t):
         return t
