@@ -1,7 +1,7 @@
 # aisc-report-plugin-interface
 
 `aisc-report-plugin-interface` (import name `aisc_report_plugin_interface`) is the Python library that report
-plugins are written against. It serves the Report in step 4 Collect evidence of AISC, the AI Assessment Sandbox
+plugins are written against. It serves the Report in step 4 AI Assessment Sandbox of AISC, the AI Assessment Sandbox
 Configurator (steps: 1 Qualify the AI system, 2 Set control objectives, 3 Choose tests and checklists, 4 Collect
 evidence): the report composer (`report-composer`) lets a user assemble a report from **blocks**, and the
 report renderer (`report-renderer`, `apps/report-generator` in the aisc repository) draws each block into an
